@@ -35,22 +35,22 @@ const Twitterlayout: React.FC<TwitterlayoutProps> = (props) => {
       {
         title: "Explore",
         icon: <BiHash />,
-        link: "/",
+        link: "/explore",
       },
       {
         title: "Notifications",
         icon: <BsBell />,
-        link: "/",
+        link: "/notifications",
       },
       {
         title: "Messages",
         icon: <BsEnvelope />,
-        link: "/",
+        link: "/messages",
       },
       {
         title: "Bookmarks",
         icon: <BsBookmark />,
-        link: "/",
+        link: "/bookmarks",
       },
       {
         title: "Twitter Blue",
@@ -82,15 +82,21 @@ const Twitterlayout: React.FC<TwitterlayoutProps> = (props) => {
       );
 
       toast.success("Verified Success");
-      console.log(verifyGoogleToken);
 
       if (verifyGoogleToken)
         window.localStorage.setItem("__twitter_token", verifyGoogleToken);
 
-      await queryClient.invalidateQueries(["curent-user"]);
+      await queryClient.invalidateQueries(["current-user"]); // ✅ typo fixed
     },
     [queryClient]
   );
+
+  // ✅ NEW: Logout — clear token and reset user state
+  const handleLogout = useCallback(() => {
+    window.localStorage.removeItem("__twitter_token");
+    queryClient.invalidateQueries(["current-user"]);
+    toast.success("Logged out");
+  }, [queryClient]);
 
   return (
     <div>
@@ -126,10 +132,10 @@ const Twitterlayout: React.FC<TwitterlayoutProps> = (props) => {
           </div>
           {user && (
             <div className="absolute bottom-5 flex gap-2 items-center bg-slate-800 px-3 py-2 rounded-full">
-              {user && user.profileImageURL && (
+              {user.profileImageURL && (
                 <Image
                   className="rounded-full"
-                  src={user?.profileImageURL}
+                  src={user.profileImageURL}
                   alt="user-image"
                   height={50}
                   width={50}
@@ -140,6 +146,14 @@ const Twitterlayout: React.FC<TwitterlayoutProps> = (props) => {
                   {user.firstName} {user.lastName}
                 </h3>
               </div>
+              {/* ✅ Logout button */}
+              <button
+                onClick={handleLogout}
+                title="Logout"
+                className="hidden sm:block text-sm text-red-400 hover:text-red-300 ml-1 transition-colors"
+              >
+                Logout
+              </button>
             </div>
           )}
         </div>
