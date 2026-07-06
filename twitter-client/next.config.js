@@ -2,11 +2,27 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: [
-      "avatars.githubusercontent.com",
-      "lh3.googleusercontent.com",
-      "piyush-twitter-new.s3.ap-south-1.amazonaws.com",
-      "i.imgur.com",
+    remotePatterns: [
+      // Google profile pictures (OAuth login)
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+      // GitHub avatars
+      {
+        protocol: "https",
+        hostname: "avatars.githubusercontent.com",
+      },
+      // ✅ Any AWS S3 bucket — covers your own bucket regardless of name/region
+      {
+        protocol: "https",
+        hostname: "**.amazonaws.com",
+      },
+      // Imgur (for testing)
+      {
+        protocol: "https",
+        hostname: "i.imgur.com",
+      },
     ],
   },
 };
