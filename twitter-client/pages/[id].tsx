@@ -35,18 +35,14 @@ const UserProfilePage: NextPage<ServerProps> = (props) => {
 
   const handleFollowUser = useCallback(async () => {
     if (!props.userInfo?.id) return;
-
     await graphqlClient.request(followUserMutation, { to: props.userInfo?.id });
-    await queryClient.invalidateQueries(["curent-user"]);
+    await queryClient.invalidateQueries(["current-user"]); // ✅ typo fixed
   }, [props.userInfo?.id, queryClient]);
 
   const handleUnfollowUser = useCallback(async () => {
     if (!props.userInfo?.id) return;
-
-    await graphqlClient.request(unfollowUserMutation, {
-      to: props.userInfo?.id,
-    });
-    await queryClient.invalidateQueries(["curent-user"]);
+    await graphqlClient.request(unfollowUserMutation, { to: props.userInfo?.id });
+    await queryClient.invalidateQueries(["current-user"]); // ✅ typo fixed
   }, [props.userInfo?.id, queryClient]);
 
   return (
@@ -54,7 +50,11 @@ const UserProfilePage: NextPage<ServerProps> = (props) => {
       <Twitterlayout>
         <div>
           <nav className="flex items-center gap-3 py-3 px-3">
-            <BsArrowLeftShort className="text-4xl" />
+            {/* ✅ Back button — was missing onClick */}
+            <BsArrowLeftShort
+              className="text-4xl cursor-pointer hover:bg-slate-800 rounded-full"
+              onClick={() => router.back()}
+            />
             <div>
               <h1 className="text-2xl font-bold">
                 {props.userInfo?.firstName} {props.userInfo?.lastName}
