@@ -13,7 +13,7 @@ datasource db {
 model User {
   id              String  @id @default(cuid())
   firstName       String
-  lastName        String? //optional
+  lastName        String?
   email           String  @unique
   profileImageURL String?
 
@@ -23,7 +23,9 @@ model User {
   followers Follows[] @relation("follower")
   following Follows[] @relation("following")
 
-  tweets Tweet[]
+  tweets   Tweet[]
+  likes    Like[]
+  comments Comment[]
 }
 
 model Follows {
@@ -46,4 +48,36 @@ model Tweet {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  likes    Like[]
+  comments Comment[]
+}
+
+// ✅ NEW: One Like per user per tweet (composite unique key enforces this)
+model Like {
+  id      String @id @default(cuid())
+
+  user    User   @relation(fields: [userId], references: [id])
+  userId  String
+
+  tweet   Tweet  @relation(fields: [tweetId], references: [id])
+  tweetId String
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, tweetId])
+}
+
+// ✅ NEW: Comments on tweets
+model Comment {
+  id      String @id @default(cuid())
+  content String
+
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+
+  tweet   Tweet  @relation(fields: [tweetId], references: [id])
+  tweetId String
+
+  createdAt DateTime @default(now())
 }
