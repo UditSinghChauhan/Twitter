@@ -1,4 +1,7 @@
-export const mutations = `#graphql
-    createTweet(payload: CreateTweetData!): Tweet  
-`;  //you provide me the payload i'll provide you the tweet 
-//returning the tweet here from resolvers  
+export const muatations = `#graphql
+    createTweet(payload: CreateTweetData!): Tweet
+    deleteTweet(tweetId: ID!): Boolean
+    likeTweet(tweetId: ID!): Tweet
+    unlikeTweet(tweetId: ID!): Tweet
+    addComment(tweetId: ID!, content: String!): Comment
+`;
