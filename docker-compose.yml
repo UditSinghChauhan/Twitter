@@ -9,9 +9,7 @@
 #   cp twitter-client/.env.example twitter-client/.env   # fill in values
 #   docker compose up --build
 #
-#   First run only:
-#     docker compose exec server npx prisma migrate deploy
-#     docker compose exec server npx prisma generate
+#   Database migrations run automatically when the server starts.
 
 services:
   # ── PostgreSQL ──────────────────────────────────────────────
@@ -52,6 +50,7 @@ services:
       context: ./twitter-server
       dockerfile: Dockerfile
     restart: unless-stopped
+    command: sh -c "npx prisma migrate deploy && node build/index"
     ports:
       - "8000:8000"
     env_file:
@@ -72,14 +71,16 @@ services:
       context: ./twitter-client
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_API_URL: http://localhost:8000
+        NEXT_PUBLIC_API_URL: http://localhost:8000/graphql
     restart: unless-stopped
     ports:
       - "3000:3000"
     env_file:
       - ./twitter-client/.env
     environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_API_URL: http://localhost:8000/graphql
+      # Used by getServerSideProps, which runs inside this container
+      API_URL_INTERNAL: http://server:8000/graphql
     depends_on:
       - server
 

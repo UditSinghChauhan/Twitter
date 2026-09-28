@@ -166,12 +166,8 @@ cp twitter-client/.env.example twitter-client/.env
 # 3. Edit the .env files with your actual credentials
 #    (see Environment Variables section below)
 
-# 4. Start everything
+# 4. Start everything (database migrations run automatically on server start)
 docker compose up --build
-
-# 5. Run database migrations (first time only)
-docker compose exec server npx prisma migrate deploy
-docker compose exec server npx prisma generate
 ```
 
 🌐 **Client:** http://localhost:3000 &nbsp;|&nbsp; **Server/GraphQL:** http://localhost:8000/graphql
@@ -218,7 +214,7 @@ yarn dev                    # Starts on http://localhost:3000
 
 | Variable               | Description                              | Example                     |
 |:-----------------------|:-----------------------------------------|:----------------------------|
-| `NEXT_PUBLIC_API_URL`  | URL of the GraphQL backend               | `http://localhost:8000`     |
+| `NEXT_PUBLIC_API_URL`  | URL of the GraphQL backend               | `http://localhost:8000/graphql` |
 
 ---
 
