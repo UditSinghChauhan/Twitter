@@ -5,6 +5,7 @@ import { prismaClient } from "../../clients/db";
 import { GraphqlContext } from "../../intefaces";
 import UserService from "../../services/user";
 import TweetService, { CreateTweetPayload } from "../../services/tweet";
+import { toISO } from "../../utils/date";
 
 const s3Client = new S3Client({
   region: process.env.AWS_DEFAULT_REGION,
@@ -101,8 +102,8 @@ const extraResolvers = {
     // Resolve author User from authorId FK
     author: (parent: Tweet) => UserService.getUserById(parent.authorId),
 
-    // Convert Prisma Date → ISO string for GraphQL String type
-    createdAt: (parent: Tweet) => parent.createdAt.toISOString(),
+    // Convert Prisma Date (or cached ISO string) → ISO string for GraphQL
+    createdAt: (parent: Tweet) => toISO(parent.createdAt),
 
     // Return list of User objects who liked this tweet
     likes: async (parent: Tweet) => {
@@ -133,8 +134,8 @@ const extraResolvers = {
     // Resolve author User from authorId FK
     author: (parent: Comment) => UserService.getUserById(parent.authorId),
 
-    // Convert Prisma Date → ISO string
-    createdAt: (parent: Comment) => parent.createdAt.toISOString(),
+    // Convert Prisma Date (or cached ISO string) → ISO string
+    createdAt: (parent: Comment) => toISO(parent.createdAt),
   },
 };
 
